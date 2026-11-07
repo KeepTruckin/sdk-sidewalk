@@ -57,6 +57,7 @@
 
 #include <sid_error.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 #define SID_ODC_SMSN_SIZE 32
 #define SID_ODC_CA_SERIAL_MIN_SIZE 4
