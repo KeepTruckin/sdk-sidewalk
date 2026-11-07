@@ -1,7 +1,7 @@
 /*
- * Copyright 2023 Amazon.com, Inc. or its affiliates. All rights reserved.
+ * Copyright 2023-2025 Amazon.com, Inc. or its affiliates. All rights reserved.
  *
- * AMAZON PROPRIETARY/CONFIDENTIAL
+ * PROPRIETARY/CONFIDENTIAL
  *
  * You may not use this file except in compliance with the terms and
  * conditions set forth in the accompanying LICENSE.txt file. This file is a
@@ -44,7 +44,8 @@
  *     using the sid_on_dev_cert_write_cert_chain() function.
  *     Do this for both ED25519 and P256r1 crypto algorithms.
  *
- *  6. Write to the device application server ED25519 public key
+ *  6. Optional. In case you don't need application server ED25519 public key, skip this step.
+ *     Write to the device application server ED25519 public key
  *     by sid_on_dev_cert_write_app_server_key() function.
  *
  *  7. Check the certificates and save all the data in the MFG storage.
@@ -56,7 +57,6 @@
 
 #include <sid_error.h>
 #include <stdlib.h>
-#include <stdint.h>
 
 #define SID_ODC_SMSN_SIZE 32
 #define SID_ODC_CA_SERIAL_MIN_SIZE 4
@@ -69,36 +69,24 @@
 #define SID_ODC_SIGNATURE_SIZE 64
 
 // Certificate Signing Request size
-#define SID_ODC_ED25519_CSR_SIZE                                                                   \
-	(SID_ODC_SMSN_SIZE + SID_ODC_ED25519_PUK_SIZE + SID_ODC_SIGNATURE_SIZE)
-#define SID_ODC_P256R1_CSR_SIZE                                                                    \
-	(SID_ODC_SMSN_SIZE + SID_ODC_P256R1_PUK_SIZE + SID_ODC_SIGNATURE_SIZE)
+#define SID_ODC_ED25519_CSR_SIZE (SID_ODC_SMSN_SIZE + SID_ODC_ED25519_PUK_SIZE + SID_ODC_SIGNATURE_SIZE)
+#define SID_ODC_P256R1_CSR_SIZE (SID_ODC_SMSN_SIZE + SID_ODC_P256R1_PUK_SIZE + SID_ODC_SIGNATURE_SIZE)
 #define SID_ODC_CSR_MAX_SIZE SID_ODC_P256R1_CSR_SIZE
 
 // Sidewalk Certificate size
-#define SID_ODC_ED25519_DEVICE_CERT_SIZE                                                           \
-	(SID_ODC_SMSN_SIZE + SID_ODC_ED25519_PUK_SIZE + SID_ODC_SIGNATURE_SIZE)
-#define SID_ODC_P256R1_DEVICE_CERT_SIZE                                                            \
-	(SID_ODC_SMSN_SIZE + SID_ODC_P256R1_PUK_SIZE + SID_ODC_SIGNATURE_SIZE)
+#define SID_ODC_ED25519_DEVICE_CERT_SIZE (SID_ODC_SMSN_SIZE + SID_ODC_ED25519_PUK_SIZE + SID_ODC_SIGNATURE_SIZE)
+#define SID_ODC_P256R1_DEVICE_CERT_SIZE (SID_ODC_SMSN_SIZE + SID_ODC_P256R1_PUK_SIZE + SID_ODC_SIGNATURE_SIZE)
 
-#define SID_ODC_ED25519_CA_MIN_SIZE                                                                \
-	(SID_ODC_CA_SERIAL_MIN_SIZE + SID_ODC_ED25519_PUK_SIZE + SID_ODC_SIGNATURE_SIZE)
-#define SID_ODC_P256R1_CA_MIN_SIZE                                                                 \
-	(SID_ODC_CA_SERIAL_MIN_SIZE + SID_ODC_P256R1_PUK_SIZE + SID_ODC_SIGNATURE_SIZE)
-#define SID_ODC_ED25519_CA_MAX_SIZE                                                                \
-	(SID_ODC_CA_SERIAL_MAX_SIZE + SID_ODC_ED25519_PUK_SIZE + SID_ODC_SIGNATURE_SIZE)
-#define SID_ODC_P256R1_CA_MAX_SIZE                                                                 \
-	(SID_ODC_CA_SERIAL_MAX_SIZE + SID_ODC_P256R1_PUK_SIZE + SID_ODC_SIGNATURE_SIZE)
+#define SID_ODC_ED25519_CA_MIN_SIZE (SID_ODC_CA_SERIAL_MIN_SIZE + SID_ODC_ED25519_PUK_SIZE + SID_ODC_SIGNATURE_SIZE)
+#define SID_ODC_P256R1_CA_MIN_SIZE (SID_ODC_CA_SERIAL_MIN_SIZE + SID_ODC_P256R1_PUK_SIZE + SID_ODC_SIGNATURE_SIZE)
+#define SID_ODC_ED25519_CA_MAX_SIZE (SID_ODC_CA_SERIAL_MAX_SIZE + SID_ODC_ED25519_PUK_SIZE + SID_ODC_SIGNATURE_SIZE)
+#define SID_ODC_P256R1_CA_MAX_SIZE (SID_ODC_CA_SERIAL_MAX_SIZE + SID_ODC_P256R1_PUK_SIZE + SID_ODC_SIGNATURE_SIZE)
 
 // Sidewalk Certificate Chain size
-#define SID_ODC_ED25519_SCC_MIN_SIZE                                                               \
-	(5 * SID_ODC_ED25519_CA_MIN_SIZE + SID_ODC_ED25519_DEVICE_CERT_SIZE)
-#define SID_ODC_P256R1_SCC_MIN_SIZE                                                                \
-	(5 * SID_ODC_P256R1_CA_MIN_SIZE + SID_ODC_P256R1_DEVICE_CERT_SIZE)
-#define SID_ODC_ED25519_SCC_MAX_SIZE                                                               \
-	(5 * SID_ODC_ED25519_CA_MAX_SIZE + SID_ODC_ED25519_DEVICE_CERT_SIZE)
-#define SID_ODC_P256R1_SCC_MAX_SIZE                                                                \
-	(5 * SID_ODC_P256R1_CA_MAX_SIZE + SID_ODC_P256R1_DEVICE_CERT_SIZE)
+#define SID_ODC_ED25519_SCC_MIN_SIZE (5 * SID_ODC_ED25519_CA_MIN_SIZE + SID_ODC_ED25519_DEVICE_CERT_SIZE)
+#define SID_ODC_P256R1_SCC_MIN_SIZE (5 * SID_ODC_P256R1_CA_MIN_SIZE + SID_ODC_P256R1_DEVICE_CERT_SIZE)
+#define SID_ODC_ED25519_SCC_MAX_SIZE (5 * SID_ODC_ED25519_CA_MAX_SIZE + SID_ODC_ED25519_DEVICE_CERT_SIZE)
+#define SID_ODC_P256R1_SCC_MAX_SIZE (5 * SID_ODC_P256R1_CA_MAX_SIZE + SID_ODC_P256R1_DEVICE_CERT_SIZE)
 #define SID_ODC_SCC_MAX_SIZE SID_ODC_P256R1_SCC_MAX_SIZE
 
 /**
@@ -108,34 +96,42 @@
  * @see sid_on_dev_cert_create_smsn()
  */
 struct sid_on_dev_cert_info {
-	/** DMS Device type */
-	const char *dev_type;
-	/** Device serial number */
-	const char *dsn;
-	/** Advertised product ID */
-	const char *apid;
-	/** Board ID (optional) */
-	const char *board_id;
+    /** DMS Device type */
+    const char *dev_type;
+    /** Device serial number */
+    const char *dsn;
+    /** Advertised product ID */
+    const char *apid;
 };
 
 /**
  * @brief Enum that defines a possible crypto algorithm used by the library.
  */
 enum sid_on_dev_cert_algo_type {
-	SID_ODC_CRYPT_ALGO_ED25519 = 1,
-	SID_ODC_CRYPT_ALGO_P256R1,
+    SID_ODC_CRYPT_ALGO_ED25519 = 1,
+    SID_ODC_CRYPT_ALGO_P256R1,
+};
+
+/**
+ * @brief Enum that defines available data from mfg to print via CLI.
+ */
+enum sid_on_dev_cert_print_fileds {
+    SID_ODC_PRINT_APID = 1,
+    SID_ODC_PRINT_APP_KEY,
+    SID_ODC_PRINT_DTID,
+    SID_ODC_PRINT_SMSN,
 };
 
 /**
  * @brief The structure that defines Sidewalk Certificate Chain parameters
  */
 struct sid_on_dev_cert_chain_params {
-	/** Crypto algorithm */
-	enum sid_on_dev_cert_algo_type algo;
-	/** Sidewalk Certificate Chain in binary format */
-	uint8_t *cert_chain;
-	/** The size of the Sidewalk Certificate Chain */
-	size_t cert_chain_size;
+    /** Crypto algorithm */
+    enum sid_on_dev_cert_algo_type algo;
+    /** Sidewalk Certificate Chain in binary format */
+    uint8_t *cert_chain;
+    /** The size of the Sidewalk Certificate Chain */
+    size_t cert_chain_size;
 };
 
 /**
@@ -171,8 +167,7 @@ void sid_on_dev_cert_deinit(void);
  *
  * @return SID_ERROR_NONE on success, otherwise error code.
  */
-sid_error_t sid_on_dev_cert_generate_smsn(const struct sid_on_dev_cert_info *dev_info,
-					  uint8_t *smsn);
+sid_error_t sid_on_dev_cert_generate_smsn(const struct sid_on_dev_cert_info *dev_info, uint8_t *smsn);
 
 /**
  * @brief Generate Certificate Signing Request (CSR)
@@ -194,8 +189,7 @@ sid_error_t sid_on_dev_cert_generate_smsn(const struct sid_on_dev_cert_info *dev
  *
  * @return SID_ERROR_NONE on success, otherwise error code.
  */
-sid_error_t sid_on_dev_cert_generate_csr(enum sid_on_dev_cert_algo_type algo, uint8_t *csr,
-					 size_t *csr_size);
+sid_error_t sid_on_dev_cert_generate_csr(enum sid_on_dev_cert_algo_type algo, uint8_t *csr, size_t *csr_size);
 
 /**
  * @brief Write Sidewalk Certificate Chain
@@ -207,8 +201,7 @@ sid_error_t sid_on_dev_cert_generate_csr(enum sid_on_dev_cert_algo_type algo, ui
  *
  * @return SID_ERROR_NONE on success, otherwise error code.
  */
-sid_error_t
-sid_on_dev_cert_write_cert_chain(const struct sid_on_dev_cert_chain_params *chain_params);
+sid_error_t sid_on_dev_cert_write_cert_chain(const struct sid_on_dev_cert_chain_params *chain_params);
 
 /**
  * @brief Write application server ED25519 public key to the device
@@ -232,4 +225,23 @@ sid_error_t sid_on_dev_cert_write_app_server_key(const uint8_t *app_key);
  */
 sid_error_t sid_on_dev_cert_verify_and_store(void);
 
-#endif // SID_ON_DEV_CERT_H
+/**
+ * @brief read mfg data from flash space and verify certificates
+ *
+ * @return sid_error_t - SID_ERROR_GENERIC in case cert verification failed, SID_ERROR_NONE on success.
+ */
+sid_error_t sid_on_dev_cert_status_check(void);
+
+/**
+ * @brief read mfg data from flash space for printing it to CLI
+ *
+ * @param[in] info_num  - type of requested field (app_key or apid),
+ * @param[in] pData     - pointer to buffer for writing requested data,
+ * @param[in] pData     - pointer to variable which will store size of read data,
+ *
+ * @return sid_error_t - SID_ERROR_NONE
+ */
+sid_error_t
+sid_on_dev_cert_read_cert_values(enum sid_on_dev_cert_print_fileds info_num, uint8_t *data, size_t *data_size);
+
+#endif   // SID_ON_DEV_CERT_H

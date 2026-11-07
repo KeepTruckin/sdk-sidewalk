@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2025 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020-2026 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * AMAZON PROPRIETARY/CONFIDENTIAL
  *

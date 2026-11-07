@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Amazon.com, Inc. or its affiliates. All rights reserved.
+ * Copyright 2021-2026 Amazon.com, Inc. or its affiliates. All rights reserved.
  *
  * AMAZON PROPRIETARY/CONFIDENTIAL
  *
@@ -49,7 +49,7 @@ typedef enum {
  * NOTE: drift may be NULL. In this case time should be set and drift ignored. Success should be returned.
  *
  */
-sid_error_t sid_clock_now(sid_clock_t source, struct sid_timespec * time, struct sid_timespec * drift);
+sid_error_t sid_clock_now(sid_clock_t source, struct sid_timespec *time, struct sid_timespec *drift);
 
 /**
  * Set the current time and drift of specified clock source
@@ -62,7 +62,7 @@ sid_error_t sid_clock_now(sid_clock_t source, struct sid_timespec * time, struct
  *
  * NOTE: drift may be NULL. In this case time should be set and drift ignored. Success should be returned.
  */
-sid_error_t sid_clock_set(sid_clock_t source, const struct sid_timespec * time, const struct sid_timespec * drift);
+sid_error_t sid_clock_set(sid_clock_t source, const struct sid_timespec *time, const struct sid_timespec *drift);
 
 /**
  * Set the uncertainty of the clock source. This will be linked to the crystal oscillator error in parts per million.

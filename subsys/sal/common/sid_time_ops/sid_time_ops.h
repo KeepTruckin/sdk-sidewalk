@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2023 Amazon.com, Inc. or its affiliates. All rights reserved.
+ * Copyright 2020-2026 Amazon.com, Inc. or its affiliates. All rights reserved.
  *
  * AMAZON PROPRIETARY/CONFIDENTIAL
  *
@@ -29,34 +29,34 @@ extern "C" {
  */
 
 /* Add tm1 and tm2, set result in tm1 */
-void sid_time_add(struct sid_timespec * tm1, const struct sid_timespec * tm2);
+void sid_time_add(struct sid_timespec *tm1, const struct sid_timespec *tm2);
 
 /* Subtract tm2 from tm1, set result in tm1 */
-void sid_time_sub(struct sid_timespec * tm1, const struct sid_timespec * tm2);
+void sid_time_sub(struct sid_timespec *tm1, const struct sid_timespec *tm2);
 
 /* Subtract tm2 from tm1, set result in delta */
 void sid_time_delta(struct sid_timespec *delta, const struct sid_timespec *tm1, const struct sid_timespec *tm2);
 
 /* Return tm1 > tm2 */
-bool sid_time_gt(const struct sid_timespec * tm1, const struct sid_timespec * tm2);
+bool sid_time_gt(const struct sid_timespec *tm1, const struct sid_timespec *tm2);
 
 /* Return tm1 < tm2 */
-bool sid_time_lt(const struct sid_timespec * tm1, const struct sid_timespec * tm2);
+bool sid_time_lt(const struct sid_timespec *tm1, const struct sid_timespec *tm2);
 
 /* Return tm1 == tm2 */
-bool sid_time_eq(const struct sid_timespec * tm1, const struct sid_timespec * tm2);
+bool sid_time_eq(const struct sid_timespec *tm1, const struct sid_timespec *tm2);
 
 /* Normalize timespec - move nsec to msec if applicable */
-void sid_time_normalize(struct sid_timespec * tm);
+void sid_time_normalize(struct sid_timespec *tm);
 
 /* Return whether tm is infinity */
-bool sid_time_is_infinity(const struct sid_timespec * tm);
+bool sid_time_is_infinity(const struct sid_timespec *tm);
 
 /* Return whether tm is zero */
-bool sid_time_is_zero(const struct sid_timespec * tm);
+bool sid_time_is_zero(const struct sid_timespec *tm);
 
 /* Convert timespec to millisecond representation */
-uint32_t sid_timespec_to_ms(const struct sid_timespec * tm);
+uint32_t sid_timespec_to_ms(const struct sid_timespec *tm);
 
 /* Convert millseconds to timespec representation */
 void sid_ms_to_timespec(uint32_t msec, struct sid_timespec *tm);
@@ -65,7 +65,7 @@ void sid_ms_to_timespec(uint32_t msec, struct sid_timespec *tm);
 struct sid_timespec sid_ms_to_timespec_ret(uint32_t msec);
 
 /* Convert timespec to millisecond representation of size 8 bytes */
-uint64_t sid_timespec_to_ms_64(const struct sid_timespec * tm);
+uint64_t sid_timespec_to_ms_64(const struct sid_timespec *tm);
 
 /* Convert millseconds of size 8 bytes to timespec representation */
 void sid_ms_to_timespec_64(uint64_t msec, struct sid_timespec *tm);

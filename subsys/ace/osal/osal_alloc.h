@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2020 Amazon.com, Inc. or its affiliates. All rights reserved.
+ * Copyright 2019-2026 Amazon.com, Inc. or its affiliates. All rights reserved.
  *
  * AMAZON PROPRIETARY/CONFIDENTIAL
  *
@@ -79,9 +79,9 @@ typedef enum {
  */
 typedef struct aceAlloc_allocator {
     aceAlloc_bufferType_t buf_type;
-    void* (*alloc)(size_t size, void* ctx);
-    void (*free)(void* p, void* ctx);
-    void* ctx;
+    void *(*alloc)(size_t size, void *ctx);
+    void (*free)(void *p, void *ctx);
+    void *ctx;
 } aceAlloc_allocator_t;
 
 /**
@@ -110,8 +110,7 @@ ace_status_t aceAlloc_init(void);
  *          ACE_STATUS_NOT_SUPPORTED if API not supported,
  *          and a negative value from @ref ace_status_t otherwise.
  */
-ace_status_t aceAlloc_initWithAllocator(aceAlloc_allocator_t* allocators,
-                                        size_t count);
+ace_status_t aceAlloc_initWithAllocator(aceAlloc_allocator_t *allocators, size_t count);
 
 /**
  *  @brief De-initialize ace alloc
@@ -133,8 +132,7 @@ ace_status_t aceAlloc_deInit(void);
  *  @param[in] size Buffer size to be allocated
  *  @return the pointer to the allocated buffer on success, else NULL
  */
-void* aceAlloc_alloc(aceModules_moduleId_t module_id,
-                     aceAlloc_bufferType_t buf_type, size_t size);
+void *aceAlloc_alloc(aceModules_moduleId_t module_id, aceAlloc_bufferType_t buf_type, size_t size);
 
 /**
  *  @brief Allocate a buffer for an array
@@ -149,9 +147,7 @@ void* aceAlloc_alloc(aceModules_moduleId_t module_id,
  *  @param[in] size The size of each array element
  *  @return the pointer to the allocated buffer on success, else NULL
  */
-void* aceAlloc_calloc(aceModules_moduleId_t module_id,
-                      aceAlloc_bufferType_t buf_type, size_t nmemb,
-                      size_t size);
+void *aceAlloc_calloc(aceModules_moduleId_t module_id, aceAlloc_bufferType_t buf_type, size_t nmemb, size_t size);
 
 /**
  *  @brief Free a buffer back
@@ -162,8 +158,7 @@ void* aceAlloc_calloc(aceModules_moduleId_t module_id,
  *  @param[in] buf_type The memory buffer type
  *  @param[in] p Pointer to the buffer to be freed
  */
-void aceAlloc_free(aceModules_moduleId_t module_id,
-                   aceAlloc_bufferType_t buf_type, void* p);
+void aceAlloc_free(aceModules_moduleId_t module_id, aceAlloc_bufferType_t buf_type, void *p);
 
 #ifdef __cplusplus
 }

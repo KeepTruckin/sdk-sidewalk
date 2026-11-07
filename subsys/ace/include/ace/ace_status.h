@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2020 Amazon.com, Inc. or its affiliates. All rights reserved.
+ * Copyright 2018-2026 Amazon.com, Inc. or its affiliates. All rights reserved.
  *
  * AMAZON PROPRIETARY/CONFIDENTIAL
  *
@@ -288,8 +288,8 @@ typedef enum {
      */
 
     /** BT Error codes below will be deprecated.
-    * They are defined here for backward compatiblity
-    */
+     * They are defined here for backward compatiblity
+     */
     ACE_STATUS_BT_JNI_ENVIRONMENT_ERROR = -1501,
 
     ACE_STATUS_BT_JNI_THREAD_ATTACH_ERROR = -1502,
